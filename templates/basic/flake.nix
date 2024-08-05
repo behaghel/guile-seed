@@ -1,9 +1,8 @@
 {
-  description = "A flake for getting started with Guile.";
+  description = "A Nix-flake-based Guile development environment";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs";
-    flake-utils.url = "github:numtide/flake-utils";
   };
 
   outputs = {
@@ -29,6 +28,9 @@
             buildInputs = with p; [
               guile
             ];
+            shellHook = ''
+                ${pkgs.guile}/bin/guile --version
+            '';
           };
       in {
         devShells = {
@@ -37,13 +39,5 @@
 
         formatter = pkgs.default.alejandra;
       }
-    ) // {
-      templates = rec {
-        basic = {
-          path = ./templates/basic;
-          description = "A getting started template for a new Guile project";
-        };
-        default = basic;
-      };
-    };
+    );
 }
