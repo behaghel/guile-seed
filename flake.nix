@@ -3,13 +3,11 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs";
-    flake-utils.url = "github:numtide/flake-utils";
   };
 
   outputs = {
     self,
     nixpkgs,
-    flake-utils,
   }: let
     supportedSystems = [
       "aarch64-darwin"
@@ -17,33 +15,38 @@
       "x86_64-linux"
       "x86_64-darwin"
     ];
-  in
-    flake-utils.lib.eachSystem supportedSystems (
-      system: let
-        pkgs = import nixpkgs {
-          inherit system;
-        };
-
-        makeShell = p:
-          p.mkShell {
-            buildInputs = with p; [
-              guile
-            ];
-          };
-      in {
-        devShells = {
-          default = makeShell pkgs;
-        };
-
-        formatter = pkgs.default.alejandra;
-      }
-    ) // {
-      templates = rec {
-        basic = {
-          path = ./templates/basic;
-          description = "A getting started template for a new Guile project";
-        };
-        default = basic;
-      };
+    forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
+    nixpkgsFor = forAllSystems (system:
+      import nixpkgs { inherit system; overlays = [ self.overlay ]; }
+    );
+  in {
+    # A Nixpkgs overlay.
+    overlay = final: prev: {
+      guile-hall = final.callPackage ./guile-hall.nix {};
     };
+    # Provide some binary packages for selected system types.
+    packages = forAllSystems (system:
+      {
+        inherit (nixpkgsFor.${system}) hello;
+      });
+    devShells = forAllSystems (system: with nixpkgsFor.${system};
+      {
+        default =  mkShell {
+          buildInputs = [
+            guile
+            guile-hall
+          ];
+        };
+      });
+    formatter = forAllSystems(system:
+      self.packages.${system}.default.alejandra
+    );
+    templates = rec {
+      basic = {
+        path = ./templates/basic;
+        description = "A getting started template for a new Guile project";
+      };
+      default = basic;
+    };
+  };
 }

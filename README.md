@@ -56,14 +56,21 @@ Just like any other subshell this one can be exited by typing `exit` or pressing
 # Guile first steps
 Now that you have a working dev environment you can create your first guile project like this:
 
+Basic project using my nix template:
 ```bash
-TODO: nix template
+nix flake new --template github:behaghel/guile-seed my-project
 ```
 Now `cd` into your newly created project and launch `guile`.
 
+Using [guile-hall](https://gitlab.com/a-sassmannshausen/guile-hall) for more serious project management and publishing:
+```bash
+hall init --author "Jane Doe" frobnigator --execute
+```
+
 ## Learning Guile
 
-- [The Little Schemer](https://mitpress.mit.edu/9780262560993/the-little-schemer/)
+- [The Little
+  Schemer](https://mitpress.mit.edu/9780262560993/the-little-schemer/)
 - [Structure and Interpretation of Computer Programs](https://mitp-content-server.mit.edu/books/content/sectbyfn/books_pres_0/6515/sicp.zip/index.html)
 - [Simply Scheme](https://people.eecs.berkeley.edu/~bh/ss-toc2.html)
 - [The Scheme Programming Language](https://scheme.com/tspl4/)
