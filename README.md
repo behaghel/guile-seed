@@ -62,10 +62,20 @@ nix flake new --template github:behaghel/guile-seed my-project
 ```
 Now `cd` into your newly created project and launch `guile`.
 
-Using [guile-hall](https://gitlab.com/a-sassmannshausen/guile-hall) for more serious project management and publishing:
+If you have a working `guix` installation already, you can use [guile-hall](https://gitlab.com/a-sassmannshausen/guile-hall) for more serious project management and publishing:
 ```bash
+which guile       # record output for later
 hall init --author "Jane Doe" frobnigator --execute
+cd frobnigator
+hall build -x     # creates the build infra
+hall dist -xf     # creates file guix.scm
+guix shell -Df guix.scm # to enter a development shell as setup by hall for guix
+# Next command is necessary as nix guile and guix guile may not be aligned
+export GUILE=/path/to/nix/guile # see first command output
+autoreconf -vif && ./configure  # somehow guix shell isn't enough
+make check        # to run the tests
 ```
+
 
 ## Learning Guile
 
@@ -89,4 +99,4 @@ PS
 
 I recommend coding in Guile using [Emacs](https://www.gnu.org/software/emacs/) with [Geiser](https://www.nongnu.org/geiser/) and [SmartParens](https://github.com/Fuco1/smartparens).
 
-This flake was tested on Ubuntu-20.04 LTS, but it should work on Macs as well. I will set up CI eventually to test on them. Please report issues until then. Thank you!
+This flake was tested on Ubuntu-22.04 LTS, but it should work on Macs as well. I will set up CI eventually to test on them. Please report issues until then. Thank you!

@@ -34,6 +34,12 @@
         default =  mkShell {
           buildInputs = [
             guile
+            # guix
+            # is required by guile-hall but guix itself
+            # requires guix-daemon and all sorts of setup that's out
+            # of reach from this flake.
+            # Therefore to use `hall` command, we assume you are in an
+            # environment with a a working `guix` installation.
             guile-hall
           ];
         };
